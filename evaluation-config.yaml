@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: evaluation-config
+data:
+  queue-channel: "spoof_request_queue"
+  redis-address: "192.168.0.106"
+  redis-port: "31500"

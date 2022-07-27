@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: evaluation-deployment
+  labels:
+    app: evaluation
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: evaluation
+  template:
+    metadata:
+      labels:
+        app: evaluation
+    spec:
+      containers:
+        - name: evaluation
+          image: liveness-evaluation:latest
+          imagePullPolicy: Never
+          env:
+            - name: QUEUE_CHANNEL
+              valueFrom:
+                configMapKeyRef:
+                  name: evaluation-config
+                  key: queue-channel
+            - name: REDIS_ADDRESS
+              valueFrom:
+                configMapKeyRef:
+                  name: evaluation-config
+                  key: redis-address
+            - name: REDIS_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: evaluation-config
+                  key: redis-port
