@@ -1,3 +1,4 @@
+import os
 import time
 from typing import Optional
 import json
@@ -6,8 +7,9 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 import redis3, uuid
 
-CHANNEL = "spoof_request_queue"
-redis_address = "192.168.0.106"
+CHANNEL = os.environ.get("QUEUE_CHANNEL")
+redis_address = os.environ.get("REDIS_ADDRESS")
+redis_port = os.environ.get("REDIS_PORT")
 redis: redis3.Redis
 app = FastAPI()
 
@@ -15,7 +17,7 @@ app = FastAPI()
 @app.on_event("startup")
 async def startup_event():
     global redis
-    redis = redis3.Redis(host=redis_address, port=31500)
+    redis = redis3.Redis(host=redis_address, port=int(redis_port))
 
 
 class Item(BaseModel):
