@@ -10,12 +10,11 @@ import os
 from pathlib import Path
 import random
 
-CHANNEL = os.environ.get("QUEUE_CHANNEL")
-redis_address = os.environ.get("REDIS_ADDRESS")
-redis_port = os.environ.get("REDIS_PORT")
+from dotenv import load_dotenv
+
 redis: redis3.Redis = None
 threshold = .6
-
+CHANNEL = ""
 model: tf.keras.Model = None
 reconstructed_model: tf.keras.Model
 
@@ -25,7 +24,12 @@ def get_project_root() -> Path:
 
 
 def init():
-    global redis
+    global redis, CHANNEL
+    load_dotenv()
+    env = os.environ
+    CHANNEL = os.environ.get("QUEUE_CHANNEL")
+    redis_address = os.environ.get("REDIS_ADDRESS")
+    redis_port = os.environ.get("REDIS_PORT")
     redis = redis3.Redis(host=redis_address, port=int(redis_port))
     global model, reconstructed_model
     version = cv2.version
