@@ -7,6 +7,9 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 import redis3, uuid
 
+from dotenv import load_dotenv
+load_dotenv()
+
 CHANNEL = os.environ.get("QUEUE_CHANNEL")
 redis_address = os.environ.get("REDIS_ADDRESS")
 redis_port = os.environ.get("REDIS_PORT")

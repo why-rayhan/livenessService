@@ -1,11 +1,14 @@
 import base64
 import os.path
+from pathlib import Path
 
 import threading
 import requests
 import cv2
 
-from main import get_project_root
+
+def get_project_root() -> Path:
+    return Path(__file__).parent
 
 
 class myThread(threading.Thread):
@@ -14,7 +17,7 @@ class myThread(threading.Thread):
         self.jpg_as_text = jpg_as_text
 
     def run(self):
-        response = requests.post("http://127.0.0.1:8000/getLiveness", json={'base64': self.jpg_as_text})
+        response = requests.post("http://10.116.10.185/liveliness/getLiveness", json={'base64': str(self.jpg_as_text)})
         # response = requests.post("http://172.17.0.2:8000/getLiveness", json={'base64': self.jpg_as_text})
         print(response)
 
@@ -43,3 +46,4 @@ def test_get_liveness():
     # # response = requests.post("http://127.0.0.1:8000/getLiveness", json={'base64': jpg_as_text})
     # response = requests.post("http://172.17.0.2:8000/getLiveness", json={'base64': jpg_as_text})
     # print(response)
+    return 0

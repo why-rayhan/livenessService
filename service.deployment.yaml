@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service-deployment
+  labels:
+    app: liveness-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: liveness-service
+  template:
+    metadata:
+      labels:
+        app: liveness-service
+    spec:
+      containers:
+        - name: liveness-service
+          image: liveness-service:latest
+          imagePullPolicy: Never
+          env:
+            - name: QUEUE_CHANNEL
+              valueFrom:
+                configMapKeyRef:
+                  name: evaluation-config
+                  key: queue-channel
+            - name: REDIS_ADDRESS
+              valueFrom:
+                configMapKeyRef:
+                  name: evaluation-config
+                  key: redis-address
+            - name: REDIS_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: evaluation-config
+                  key: redis-port
