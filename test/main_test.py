@@ -31,8 +31,11 @@ async def request(base):
 def test_get_liveness():
     img_path = os.path.join(get_project_root(), "test1.jpg")
     img = cv2.imread("test1.png")
-    retval, buffer = cv2.imencode('.jpg', img)
-    jpg_as_text = base64.b64encode(buffer)
+    # retval, buffer = cv2.imencode('.jpg', img)
+    # jpg_as_text = base64.b64encode(buffer)
+    jpg_as_text = base64.b64encode(cv2.imencode('.jpg', img)[1]).decode()
+    # test_b = base64.b64decode(jpg_as_text)
+    # print(test_b)
 
     # Create new threads
     thread1 = myThread(jpg_as_text)
@@ -40,9 +43,9 @@ def test_get_liveness():
 
     # Start new Threads
     thread1.start()
-    # thread2.start()
+    thread2.start()
     thread1.join()
-    # thread2.join()
+    thread2.join()
     # # response = requests.post("http://127.0.0.1:8000/getLiveness", json={'base64': jpg_as_text})
     # response = requests.post("http://172.17.0.2:8000/getLiveness", json={'base64': jpg_as_text})
     # print(response)

@@ -58,4 +58,6 @@ def get_liveness(item: Item):
             break
         time.sleep(.1)
 
+    if message is None:
+        return {"verdict": "error", "log": "timeout"}
     return {"verdict": message['data']}

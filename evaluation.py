@@ -27,10 +27,11 @@ def init():
     global redis, CHANNEL
     load_dotenv()
     env = os.environ
-    CHANNEL = os.environ.get("QUEUE_CHANNEL")
-    redis_address = os.environ.get("REDIS_ADDRESS")
-    redis_port = os.environ.get("REDIS_PORT")
+    CHANNEL = env.get("QUEUE_CHANNEL")
+    redis_address = env.get("REDIS_ADDRESS")
+    redis_port = env.get("REDIS_PORT")
     redis = redis3.Redis(host=redis_address, port=int(redis_port))
+
     global model, reconstructed_model
     version = cv2.version
     model_directory = os.path.join(get_project_root(), "model", "weight", "patch")
@@ -118,17 +119,23 @@ if __name__ == "__main__":
             item_dict = json.loads(item)
             frame = item_dict['frame']
             id = item_dict['id']
-            img = base64_to_img(frame)
 
-            verdict = predict_from_patch_model(img)
-            verdict2 = predict_from_ab_model(img)
+            try :
+                img = base64_to_img(frame)
 
-            log = "verdict: " + verdict + "  verdict2: " + verdict2
-            if verdict == "fake":
-                verdict = verdict2
+                verdict = predict_from_patch_model(img)
+                verdict2 = predict_from_ab_model(img)
 
-            result = json.dumps({"verdict": verdict, "log": log})
-            redis.publish(id, result)
-            print("frame published")
+                log = "verdict: " + verdict + "  verdict2: " + verdict2
+                if verdict == "fake":
+                    verdict = verdict2
+
+                result = json.dumps({"verdict": verdict, "log": log})
+                redis.publish(id, result)
+                print("frame published")
+            except Exception as e:
+                print(e)
+                result = json.dumps({"verdict": "error", "log": e})
+                redis.publish(id, result)
         except Exception as e:
             print(e)
